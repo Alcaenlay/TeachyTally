@@ -5,8 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowRight, QrCode, CalendarCheck, GraduationCap } from "lucide-react";
-import { Logo } from "@/components/icons";
+import { ArrowRight, QrCode, GraduationCap } from "lucide-react";
+import { Logo, BrandCheck } from "@/components/icons";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { useEffect, useState } from "react";
 
@@ -115,7 +115,7 @@ export default function Home() {
             <Card className="text-center">
               <CardContent className="p-8">
                 <div className="bg-primary/20 text-primary rounded-full w-16 h-16 flex items-center justify-center mx-auto">
-                  <CalendarCheck className="w-8 h-8" />
+                  <BrandCheck className="w-8 h-8" />
                 </div>
                 <h3 className="mt-6 text-xl font-bold font-headline">Track & Report</h3>
                 <p className="mt-2 text-muted-foreground">

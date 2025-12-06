@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Camera, CheckCircle, XCircle, Info } from "lucide-react";
+import { Camera, XCircle, Info } from "lucide-react";
 import { useFirebase, useUser, useCollection, useMemoFirebase } from "@/firebase";
 import { collection, addDoc, query, where, getDocs, serverTimestamp, doc, runTransaction } from "firebase/firestore";
 import type { Student, Schedule } from "@/lib/mock-data";

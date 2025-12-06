@@ -4,7 +4,8 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowUpRight, QrCode, Users, CalendarCheck, BarChart3 } from "lucide-react";
+import { ArrowUpRight, QrCode, Users, BarChart3 } from "lucide-react";
+import { BrandCheck } from "@/components/icons";
 import { useCollection, useFirebase, useMemoFirebase, useUser } from "@/firebase";
 import { collection, query, where, orderBy } from "firebase/firestore";
 import type { Student } from "@/lib/mock-data";
@@ -115,9 +116,9 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Present Today</CardTitle>
-            <CalendarCheck className="h-4 w-4 text-green-500" />
+            <BrandCheck className="h-4 w-4 text-green-500" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{presentStudents}</div>

@@ -5,7 +5,8 @@ import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Trash2, Edit, Users, CheckSquare } from "lucide-react";
+import { Trash2, Edit, Users } from "lucide-react";
+import { BrandCheck } from "@/components/icons";
 import type { Grade } from "@/lib/mock-data";
 import { useFirebase } from "@/firebase";
 import { doc, writeBatch } from "firebase/firestore";
@@ -83,7 +84,7 @@ export function AssessmentCard({ assessmentData, totalStudents, onEdit }: Assess
       <CardContent className="flex-grow flex flex-col justify-between space-y-4">
         <div>
             <div className="flex justify-between items-center text-sm p-3 bg-muted/50 rounded-lg">
-                <span className="text-muted-foreground flex items-center gap-2"><CheckSquare/> Perfect Score</span>
+                <span className="text-muted-foreground flex items-center gap-2"><BrandCheck className="h-4 w-4"/> Perfect Score</span>
                 <span className="font-bold text-lg">{assessment.perfectScore}</span>
             </div>
             <div className="flex justify-between items-center text-sm p-3 bg-muted/50 rounded-lg mt-2">
