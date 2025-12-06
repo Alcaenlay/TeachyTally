@@ -20,15 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useFirebase } from "@/firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { Loader2, Download, Calendar as CalendarIcon, Eye } from "lucide-react";
+import { Loader2, Download, Eye } from "lucide-react";
 import type { Student, Schedule, AttendanceRecord } from "@/lib/mock-data";
 import { format, eachDayOfInterval } from "date-fns";
-import { DateRange } from "react-day-picker";
 import { Label } from "../ui/label";
 import { ReportPreview, type PreviewData } from "./report-preview";
 
@@ -40,7 +38,7 @@ type ExportAttendanceDialogProps = {
 export function ExportAttendanceDialog({ students, schedules }: ExportAttendanceDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined);
+  const [dateRange, setDateRange] = useState<{ from?: Date | null; to?: Date | null } | undefined>(undefined);
   const [selectedGroup, setSelectedGroup] = useState<string>("");
   const [previewData, setPreviewData] = useState<PreviewData | null>(null);
   const { firestore, user } = useFirebase();
@@ -87,15 +85,15 @@ export function ExportAttendanceDialog({ students, schedules }: ExportAttendance
       const interval = { start: dateRange.from, end: dateRange.to };
       const allDays = eachDayOfInterval(interval);
 
-      const scheduledDateStrings = allDays
+      const scheduledDates = allDays
         .filter(day => {
           const dayOfWeek = format(day, "EEEE");
           return relevantSchedules.some(s => s.dayOfWeek === dayOfWeek);
         })
-        .map(day => format(day, "yyyy-MM-dd"))
-        .sort();
+        .map(day => ({ key: format(day, "yyyy-MM-dd"), label: format(day, "MM/dd/yyyy") }))
+        .sort((a, b) => a.key.localeCompare(b.key));
 
-      if (scheduledDateStrings.length === 0) {
+      if (scheduledDates.length === 0) {
         toast({ title: "No Scheduled Classes", description: "No scheduled classes found for the selected group in this date range." });
         setIsLoading(false);
         return;
@@ -114,9 +112,9 @@ export function ExportAttendanceDialog({ students, schedules }: ExportAttendance
       const dataForSheet = studentsToExport.map(student => {
         const row: { [key: string]: string } = { "Student Name": student.name, "Grade": student.grade, "Section": student.section };
         
-        scheduledDateStrings.forEach(date => {
+        scheduledDates.forEach(d => {
           const record = attendanceRecords.find(
-            ar => ar.studentId === student.id && ar.date === date
+            ar => ar.studentId === student.id && ar.date === d.key
           );
           let statusAbbreviation: "p" | "l" | "a" = "a";
           if (record) {
@@ -126,7 +124,7 @@ export function ExportAttendanceDialog({ students, schedules }: ExportAttendance
               default: statusAbbreviation = "a";
              }
           }
-          row[date] = statusAbbreviation;
+          row[d.label] = statusAbbreviation;
         });
         return row;
       });
@@ -138,7 +136,7 @@ export function ExportAttendanceDialog({ students, schedules }: ExportAttendance
       }
 
       setPreviewData({
-        headers: ["Student Name", ...scheduledDateStrings],
+        headers: ["Student Name", ...scheduledDates.map(d => d.label)],
         rows: dataForSheet,
         groupName: selectedGroup,
       });
@@ -205,39 +203,35 @@ export function ExportAttendanceDialog({ students, schedules }: ExportAttendance
               
                 <div className="space-y-2">
                   <Label>Date Range</Label>
-                  <Popover>
-                      <PopoverTrigger asChild>
-                      <Button
-                          variant={"outline"}
-                          className="w-full justify-start text-left font-normal"
-                      >
-                          <CalendarIcon className="mr-2 h-4 w-4" />
-                          {dateRange?.from ? (
-                          dateRange.to ? (
-                              <>
-                              {format(dateRange.from, "LLL dd, y")} -{" "}
-                              {format(dateRange.to, "LLL dd, y")}
-                              </>
-                          ) : (
-                              format(dateRange.from, "LLL dd, y")
-                          )
-                          ) : (
-                          <span>Pick a date</span>
-                          )}
-                      </Button>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                      <Calendar
-                          initialFocus
-                          mode="range"
-                          defaultMonth={dateRange?.from}
-                          selected={dateRange}
-                          onSelect={setDateRange}
-                          numberOfMonths={2}
-                          disabled={(date) => date > new Date()}
+                  <div className="flex gap-2">
+                    <div className="flex-1">
+                      <Label className="sr-only">From</Label>
+                      <Input
+                        type="date"
+                        value={dateRange?.from ? format(dateRange.from, "yyyy-MM-dd") : ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setDateRange(prev => ({ ...(prev || {}), from: val ? new Date(val) : null }));
+                        }}
                       />
-                      </PopoverContent>
-                  </Popover>
+                    </div>
+                    <div className="flex-1">
+                      <Label className="sr-only">To</Label>
+                      <Input
+                        type="date"
+                        value={dateRange?.to ? format(dateRange.to, "yyyy-MM-dd") : ""}
+                        onChange={(e) => {
+                          const val = e.target.value;
+                          setDateRange(prev => ({ ...(prev || {}), to: val ? new Date(val) : null }));
+                        }}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="text-sm text-muted-foreground mt-2">
+                    {dateRange?.from ? format(dateRange.from, "MM/dd/yyyy") : "MM/DD/YYYY"}
+                    {dateRange?.from && dateRange?.to ? ` - ${format(dateRange.to, "MM/dd/yyyy")}` : ""}
+                  </div>
                 </div>
             </div>
 
