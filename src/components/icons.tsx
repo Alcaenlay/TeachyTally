@@ -4,18 +4,16 @@ export function Logo(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
+      viewBox="0 0 120 120"
       fill="none"
-      stroke="currentColor"
-      strokeWidth={1.8}
-      strokeLinecap="round"
-      strokeLinejoin="round"
       {...props}
     >
-      {/* Horizontal bar of T */}
-      <path d="M2.5 4.2h19" />
-      {/* Vertical stem of T */}
-      <path d="M12 4.2v11.5" />
+      {/* T mark - black */}
+      <line x1="18" y1="26" x2="102" y2="26" stroke="#000" strokeWidth="12" strokeLinecap="round" />
+      <line x1="60" y1="26" x2="60" y2="90" stroke="#000" strokeWidth="12" strokeLinecap="round" />
+
+      {/* Brand check - yellow */}
+      <path d="M52 78 L68 94 L106 56" fill="none" stroke="#FFD400" strokeWidth="10" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
