@@ -15,17 +15,11 @@ export function initializeFirebase() {
     // populate the FirebaseOptions in production. It is critical that we attempt to call initializeApp()
     // without arguments.
     let firebaseApp;
-    try {
-      // Attempt to initialize via Firebase App Hosting environment variables
-      firebaseApp = initializeApp();
-    } catch (e) {
-      // Only warn in production because it's normal to use the firebaseConfig to initialize
-      // during development
-      if (process.env.NODE_ENV === "production") {
-        console.warn('Automatic initialization failed. Falling back to firebase config object.', e);
-      }
-      firebaseApp = initializeApp(firebaseConfig);
-    }
+    // On non-Firebase Hosting platforms (Vercel, Netlify, etc.) calling initializeApp()
+    // without options will throw (app/no-options). To be compatible across environments
+    // we initialize using the provided `firebaseConfig` object.
+    // This will also work on Firebase Hosting; passing explicit options is safe and reliable.
+    firebaseApp = initializeApp(firebaseConfig);
 
     return getSdks(firebaseApp);
   }
