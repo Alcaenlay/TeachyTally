@@ -168,8 +168,8 @@ export default function GradesReportPage() {
     <main className="flex-1 p-4 md:p-8 space-y-8">
       <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-headline">Gradebook Report</h1>
-          <p className="text-muted-foreground">Review student scores in a gradebook format.</p>
+          <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-headline">Gradebook Report</h1>
+          <p className="text-sm md:text-base text-muted-foreground">Review student scores in a gradebook format.</p>
         </div>
         <ExportGradesDialog 
             grades={grades || []}
@@ -191,9 +191,9 @@ export default function GradesReportPage() {
               <Skeleton className="h-10 w-[240px]" />
             </div>
           ) : (
-            <div className="flex flex-col sm:flex-row gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Select value={selectedGroup} onValueChange={setSelectedGroup}>
-                <SelectTrigger className="w-full sm:w-[240px]">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a Class" />
                 </SelectTrigger>
                 <SelectContent>
@@ -203,7 +203,7 @@ export default function GradesReportPage() {
               </Select>
 
               <Select value={selectedSubject} onValueChange={setSelectedSubject}>
-                <SelectTrigger className="w-full sm:w-[240px]">
+                <SelectTrigger className="w-full">
                   <SelectValue placeholder="Select a Subject" />
                 </SelectTrigger>
                 <SelectContent>
@@ -218,11 +218,11 @@ export default function GradesReportPage() {
       
        <Card>
         <CardHeader>
-            <CardTitle>Gradebook View</CardTitle>
-            <CardDescription>Showing records for the selected filters.</CardDescription>
+            <CardTitle className="text-lg md:text-xl">Gradebook View</CardTitle>
+            <CardDescription className="text-xs md:text-sm">Showing records for the selected filters.</CardDescription>
         </CardHeader>
         <CardContent>
-            <ScrollArea className="w-full h-[600px] border rounded-md">
+            <ScrollArea className="w-full h-[400px] md:h-[600px] border rounded-md">
                 {isLoading ? (
                     <div className="p-4">
                         <Skeleton className="h-10 w-full mb-2" />

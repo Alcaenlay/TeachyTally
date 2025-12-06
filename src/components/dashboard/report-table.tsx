@@ -54,21 +54,22 @@ export default function ReportTable({ attendanceRecords }: ReportTableProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Daily Log</CardTitle>
-        <CardDescription>
+        <CardTitle className="text-lg md:text-xl">Daily Log</CardTitle>
+        <CardDescription className="text-xs md:text-sm">
           Showing attendance for the selected date.
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <ScrollArea className="h-[400px]">
+        <div className="overflow-x-auto -mx-6 px-6">
+          <div className="min-w-full">
             <TooltipProvider>
-              <Table>
+              <Table className="text-sm">
               <TableHeader>
                   <TableRow>
-                  <TableHead>Student Name</TableHead>
-                  <TableHead>Subject</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Time</TableHead>
+                  <TableHead className="min-w-[140px]">Student</TableHead>
+                  <TableHead className="min-w-[100px]">Subject</TableHead>
+                  <TableHead className="min-w-[80px]">Status</TableHead>
+                  <TableHead className="text-right min-w-[80px]">Time</TableHead>
                   </TableRow>
               </TableHeader>
               <TableBody>
@@ -95,7 +96,8 @@ export default function ReportTable({ attendanceRecords }: ReportTableProps) {
               </TableBody>
               </Table>
             </TooltipProvider>
-        </ScrollArea>
+          </div>
+        </div>
       </CardContent>
     </Card>
   );
