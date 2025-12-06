@@ -45,24 +45,24 @@ export default function AiSummary({ attendanceData, teacherId, teacherName }: Ai
 
   return (
     <Card>
-      <CardHeader className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <CardHeader className="flex flex-col gap-3 p-3 md:p-6">
         <div>
-          <CardTitle className="flex items-center gap-2 font-headline">
-            <Sparkles className="text-primary" />
-            AI Attendance Summary
+          <CardTitle className="flex items-center gap-2 font-headline text-base md:text-lg">
+            <Sparkles className="h-4 w-4 text-primary flex-shrink-0" />
+            AI Summary
           </CardTitle>
-          <CardDescription>Get quick insights into today's attendance patterns.</CardDescription>
+          <CardDescription className="text-xs md:text-sm mt-1">Quick insights into attendance patterns.</CardDescription>
         </div>
-        <Button onClick={handleGenerateSummary} disabled={isLoading || !teacherId} className="w-full md:w-auto">
+        <Button onClick={handleGenerateSummary} disabled={isLoading || !teacherId} className="w-full text-xs md:text-sm py-2 h-auto">
           {isLoading ? (
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <Loader2 className="mr-1 md:mr-2 h-4 w-4 animate-spin flex-shrink-0" />
           ) : (
-            <Sparkles className="mr-2 h-4 w-4" />
+            <Sparkles className="mr-1 md:mr-2 h-4 w-4 flex-shrink-0" />
           )}
-          Generate Summary
+          Generate
         </Button>
       </CardHeader>
-      <CardContent>
+      <CardContent className="p-3 md:p-6">
         {isLoading && (
           <div className="space-y-2">
             <Skeleton className="h-4 w-full" />
@@ -71,20 +71,20 @@ export default function AiSummary({ attendanceData, teacherId, teacherName }: Ai
           </div>
         )}
         {error && (
-          <Alert variant="destructive">
+          <Alert variant="destructive" className="text-xs md:text-sm">
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
         {summary && (
-            <div className="prose prose-sm max-w-none text-foreground dark:prose-invert">
+            <div className="prose prose-sm max-w-none text-foreground dark:prose-invert text-xs md:text-sm">
                 <p>{summary}</p>
             </div>
         )}
         {!isLoading && !summary && !error && (
-          <p className="text-sm text-muted-foreground">
-            Click "Generate Summary" to get an AI-powered analysis of the attendance data for the selected date.
+          <p className="text-xs md:text-sm text-muted-foreground">
+            Click "Generate" to get AI-powered attendance analysis.
           </p>
         )}
       </CardContent>

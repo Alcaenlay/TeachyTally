@@ -173,22 +173,22 @@ export default function AttendanceReportsPage() {
   }, [filteredRecords, isLoading]);
 
   return (
-    <main className="flex-1 p-4 md:p-8 space-y-8">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+    <main className="flex-1 p-2 md:p-8 space-y-4 md:space-y-8 overflow-x-hidden">
+      <div className="flex flex-col space-y-3">
         <div>
-          <h1 className="text-2xl md:text-3xl font-bold tracking-tight font-headline">Attendance Reports</h1>
-          <p className="text-sm md:text-base text-muted-foreground">Review attendance records and generate insights.</p>
+          <h1 className="text-xl md:text-3xl font-bold tracking-tight font-headline">Attendance Reports</h1>
+          <p className="text-xs md:text-base text-muted-foreground">Review attendance records and generate insights.</p>
         </div>
-        <div className="flex flex-col gap-2 w-full md:w-auto md:flex-row md:items-center">
+        <div className="flex flex-col gap-2 w-full">
            <ExportAttendanceDialog 
             students={students || []} 
             schedules={allSchedules || []}
           />
           <Popover>
             <PopoverTrigger asChild>
-              <Button variant={"outline"} className="w-full md:w-auto justify-start text-sm">
-                <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
-                <span className="truncate">{format(selectedDate, "PPP")}</span>
+              <Button variant={"outline"} className="w-full justify-start text-xs md:text-sm py-2 md:py-2 h-auto">
+                <CalendarIcon className="mr-1 md:mr-2 h-4 w-4 flex-shrink-0" />
+                <span className="truncate">{format(selectedDate, "MMM d, yyyy")}</span>
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0">
@@ -237,10 +237,10 @@ export default function AttendanceReportsPage() {
             teacherName={user?.displayName} 
           />
           
-          <div className="flex flex-col sm:flex-row sm:items-center gap-2 pb-2">
-            <h3 className="text-sm font-medium text-muted-foreground whitespace-nowrap">Filter by Class:</h3>
+          <div className="flex flex-col gap-1">
+            <h3 className="text-xs md:text-sm font-medium text-muted-foreground">Filter:</h3>
             <Select value={selectedGroup} onValueChange={setSelectedGroup}>
-              <SelectTrigger className="w-full sm:w-[220px] bg-primary/20 border-primary text-primary-foreground focus:ring-primary">
+              <SelectTrigger className="w-full bg-primary/20 border-primary text-primary-foreground focus:ring-primary text-xs md:text-sm py-2 h-auto">
                 <SelectValue placeholder="Select a class" />
               </SelectTrigger>
               <SelectContent>

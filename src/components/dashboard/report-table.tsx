@@ -54,42 +54,42 @@ export default function ReportTable({ attendanceRecords }: ReportTableProps) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-lg md:text-xl">Daily Log</CardTitle>
+        <CardTitle className="text-base md:text-lg">Daily Log</CardTitle>
         <CardDescription className="text-xs md:text-sm">
-          Showing attendance for the selected date.
+          Attendance for the selected date.
         </CardDescription>
       </CardHeader>
-      <CardContent>
-        <div className="overflow-x-auto -mx-6 px-6">
-          <div className="min-w-full">
+      <CardContent className="p-3 md:p-6">
+        <div className="w-full overflow-x-auto">
+          <div className="min-w-max md:min-w-full">
             <TooltipProvider>
-              <Table className="text-sm">
+              <Table className="text-xs md:text-sm">
               <TableHeader>
-                  <TableRow>
-                  <TableHead className="min-w-[140px]">Student</TableHead>
-                  <TableHead className="min-w-[100px]">Subject</TableHead>
-                  <TableHead className="min-w-[80px]">Status</TableHead>
-                  <TableHead className="text-right min-w-[80px]">Time</TableHead>
+                  <TableRow className="hover:bg-transparent">
+                  <TableHead className="min-w-[110px] px-1 py-2">Student</TableHead>
+                  <TableHead className="min-w-[80px] px-1 py-2">Subject</TableHead>
+                  <TableHead className="min-w-[65px] px-1 py-2">Status</TableHead>
+                  <TableHead className="text-right min-w-[60px] px-1 py-2">Time</TableHead>
                   </TableRow>
               </TableHeader>
               <TableBody>
                   {attendanceRecords.length > 0 ? (
                   attendanceRecords.map((record) => (
-                      <TableRow key={record.id}>
-                      <TableCell className="font-medium">{record.studentName}</TableCell>
-                       <TableCell>{record.subject}</TableCell>
-                      <TableCell>
-                          <Badge variant={record.status === 'Absent' ? 'destructive' : 'secondary'} className={getBadgeVariant(record.status)}>
+                      <TableRow key={record.id} className="hover:bg-muted/50">
+                      <TableCell className="font-medium text-xs px-1 py-2">{record.studentName}</TableCell>
+                       <TableCell className="text-xs px-1 py-2">{record.subject}</TableCell>
+                      <TableCell className="px-1 py-2">
+                          <Badge variant={record.status === 'Absent' ? 'destructive' : 'secondary'} className={`${getBadgeVariant(record.status)} text-xs px-1 py-0`}>
                             {record.status}
                           </Badge>
                       </TableCell>
-                      <TableCell className="text-right">{formatTime(record.createdAt)}</TableCell>
+                      <TableCell className="text-right text-xs px-1 py-2">{formatTime(record.createdAt)}</TableCell>
                       </TableRow>
                   ))
                   ) : (
                   <TableRow>
-                      <TableCell colSpan={4} className="h-24 text-center">
-                      No attendance records for this date.
+                      <TableCell colSpan={4} className="h-16 text-center text-xs">
+                      No records.
                       </TableCell>
                   </TableRow>
                   )}
