@@ -58,7 +58,7 @@ export function LoginForm() {
     setIsLoading(true);
     try {
       if (!auth) throw new Error("Auth service is not available.");
-      initiateEmailSignIn(auth, values.email, values.password);
+      await initiateEmailSignIn(auth, values.email, values.password);
       // Non-blocking, onAuthStateChanged will handle the redirect
     } catch (error: any) {
       toast({
