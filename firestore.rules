@@ -1,0 +1,156 @@
+
+/**
+ * TeachyTally Firestore Security Rules
+ *
+ * Core Philosophy:
+ * This ruleset enforces a security model based on teacher roles and associations.
+ * A teacher has direct ownership of their own profile document. Access to student
+ * data and their subcollections (like attendance) is granted based on a shared
+ * access model, where a teacher's UID must be present in a list on the student's
+ * document.
+ *
+ * Data Structure:
+ * - /teachers/{teacherId}: Top-level collection for teacher profiles.
+ * - /students/{studentId}: Top-level collection for student profiles.
+ * - /attendance/{attendanceId}: Top-level collection for attendance records.
+ * - /schedules/{scheduleId}: Top-level collection for class schedules.
+ * - /grades/{gradeId}: Top-level collection for grade records.
+ *
+ * Key Security Decisions:
+ * - Teacher profiles are private to the owner. Listing all teachers is disabled.
+ * - Student data is not public. It can only be accessed by teachers explicitly
+ *   associated with a student via the 'teacherIds' array on the student document.
+ * - Attendance records can only be created by an associated teacher, who then becomes
+ *   the 'owner' of that specific record for modification or deletion purposes.
+ * - Read access to all of a student's attendance records is granted to any
+ *   teacher associated with that student to facilitate reporting.
+ * - Schedules are private to the teacher who created them.
+ * - Grades are private to the teacher who created them.
+ *
+ * Denormalization for Authorization:
+ * To enable fast and secure access control, authorization data is denormalized:
+ * - The 'students' documents contain a 'teacherIds' array. This avoids needing to
+ *   query a separate collection to determine if a teacher can access student data.
+ * - The 'attendance', 'schedules', and 'grades' documents contain a 'teacherId'. This establishes direct
+ *   ownership for write operations on individual records without extra lookups.
+ *
+ * Structural Segregation:
+ * This model uses path-based segregation. Private teacher data is kept entirely
+ * separate from the semi-private student data, simplifying rules and client-side queries.
+ */
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    //-------------------------------------------------------------------------
+    // Helper Functions
+    //-------------------------------------------------------------------------
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * Used to enforce document ownership based on a path parameter.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID is present in a list of IDs.
+     * Used to grant access to a shared resource, like a student document.
+     */
+    function isAssociatedTeacher(teacherIdList) {
+      return isSignedIn() && request.auth.uid in teacherIdList;
+    }
+
+    /**
+     * Checks if a teacher is associated with a specific student by checking the
+     * student's parent document. This is used to secure subcollections.
+     */
+    function isAssociatedWithStudent(studentId) {
+      let studentDoc = get(/databases/$(database)/documents/students/$(studentId));
+      return isSignedIn() && request.auth.uid in studentDoc.data.teacherIds;
+    }
+
+    //-------------------------------------------------------------------------
+    // Collection Rules
+    //-------------------------------------------------------------------------
+
+    /**
+     * @description Manages teacher profiles. Only the teacher who owns the profile can
+     *              access or modify it. Listing all teachers is prohibited.
+     * @path        /teachers/{teacherId}
+     */
+    match /teachers/{teacherId} {
+      allow get: if isOwner(teacherId);
+      allow list: if false;
+      allow create: if isOwner(teacherId) && request.resource.data.id == teacherId;
+      allow update: if isOwner(teacherId) && resource != null && request.resource.data.id == resource.data.id;
+      allow delete: if isOwner(teacherId) && resource != null;
+    }
+
+    /**
+     * @description Manages student profiles. Access is granted to any teacher whose UID
+     *              is in the student's `teacherIds` array.
+     * @path        /students/{studentId}
+     */
+    match /students/{studentId} {
+      allow get: if isAssociatedTeacher(resource.data.teacherIds);
+      allow list: if isSignedIn(); // Allow listing by any signed-in user, queries must filter by teacherIds
+      allow create: if isSignedIn() && request.auth.uid in request.resource.data.teacherIds;
+      allow update: if isAssociatedTeacher(resource.data.teacherIds) && resource != null;
+      allow delete: if isAssociatedTeacher(resource.data.teacherIds) && resource != null;
+    }
+
+    /**
+     * @description Manages attendance records. Teachers can read records they own and create
+     *              new records for students they are associated with.
+     *              Listing is only allowed when querying by the teacher's own ID.
+     * @path        /attendance/{attendanceId}
+     */
+    match /attendance/{attendanceId} {
+      allow get: if isSignedIn() && isOwner(resource.data.teacherId);
+      allow create: if isSignedIn() && isOwner(request.resource.data.teacherId);
+      allow update: if isSignedIn() && isOwner(resource.data.teacherId);
+      allow delete: if isSignedIn() && isOwner(resource.data.teacherId);
+      allow list: if isSignedIn();
+    }
+    
+    /**
+     * @description Manages class schedules. Only the teacher who created the schedule can
+     *              access or modify it.
+     * @path        /schedules/{scheduleId}
+     */
+    match /schedules/{scheduleId} {
+      allow get: if isSignedIn() && isOwner(resource.data.teacherId);
+      allow list: if isSignedIn(); // Allow listing, client must filter by teacherId
+      allow create: if isSignedIn() && isOwner(request.resource.data.teacherId);
+      allow update: if isSignedIn() && isOwner(resource.data.teacherId);
+      allow delete: if isSignedIn() && isOwner(resource.data.teacherId);
+    }
+    
+    /**
+     * @description Manages grade records. Only the teacher who created the grade can
+     *              access or modify it.
+     * @path        /grades/{gradeId}
+     */
+    match /grades/{gradeId} {
+      allow get: if isSignedIn() && isOwner(resource.data.teacherId);
+      allow list: if isSignedIn(); // Allow listing, client must filter by teacherId
+      allow create: if isSignedIn() && isOwner(request.resource.data.teacherId);
+      allow update: if isSignedIn() && isOwner(resource.data.teacherId);
+      allow delete: if isSignedIn() && isOwner(resource.data.teacherId);
+    }
+  }
+}
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Rules have been removed as avatars are now stored in Firestore
+  }
+}

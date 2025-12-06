@@ -1,0 +1,344 @@
+
+{
+  "entities": {
+    "Teacher": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Teacher",
+      "type": "object",
+      "description": "Represents a teacher user in the system.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Teacher entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "Email address of the teacher.",
+          "format": "email"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the teacher."
+        },
+        "photoURL": {
+          "type": "string",
+          "description": "URL of the teacher's profile picture, can be a data URI."
+        },
+        "schoolName": {
+            "type": "string",
+            "description": "The name of the school the teacher belongs to."
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "name"
+      ]
+    },
+    "Student": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Student",
+      "type": "object",
+      "description": "Represents a student in the system.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Student entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the student."
+        },
+        "grade": {
+          "type": "string",
+          "description": "Grade level of the student."
+        },
+        "section": {
+          "type": "string",
+          "description": "Section of the student."
+        },
+        "teacherIds": {
+          "type": "array",
+          "description": "References to Teachers. (Relationship: Teacher N:N Student)",
+          "items": {
+            "type": "string"
+          }
+        },
+        "qrCode": {
+          "type": "string",
+          "description": "Unique QR code associated with the student."
+        },
+        "schoolName": {
+          "type": "string",
+          "description": "The name of the school the student belongs to."
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "grade",
+        "section",
+        "qrCode"
+      ]
+    },
+    "Attendance": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Attendance",
+      "type": "object",
+      "description": "Represents a student's attendance record for a specific date.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Attendance record."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to Student. (Relationship: Student 1:N Attendance)"
+        },
+        "teacherId": {
+          "type": "string",
+          "description": "Reference to Teacher. (Relationship: Teacher 1:N Attendance)"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date of the attendance record.",
+          "format": "date"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Present", "Absent", "Late"]
+        },
+        "studentName": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string",
+          "description": "The subject for which attendance was taken."
+        },
+        "createdAt": {
+          "type": "object",
+          "description": "Timestamp when the attendance was recorded."
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "teacherId",
+        "date",
+        "status",
+        "subject"
+      ]
+    },
+    "Schedule": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Schedule",
+      "type": "object",
+      "description": "Represents a class schedule set by a teacher.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Schedule."
+        },
+        "teacherId": {
+          "type": "string",
+          "description": "Reference to the Teacher who set the schedule."
+        },
+        "grade": {
+          "type": "string"
+        },
+        "section": {
+          "type": "string"
+        },
+        "subject": {
+          "type": "string",
+          "description": "The subject being taught."
+        },
+        "dayOfWeek": {
+          "type": "string",
+          "enum": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
+        },
+        "startTime": {
+          "type": "string",
+          "description": "Start time of the class in HH:mm format."
+        },
+        "endTime": {
+          "type": "string",
+          "description": "End time of the class in HH:mm format."
+        },
+        "lateAfterMinutes": {
+          "type": "number",
+          "description": "Grace period in minutes before a student is marked as late."
+        }
+      },
+      "required": [
+        "id",
+        "teacherId",
+        "grade",
+        "section",
+        "subject",
+        "dayOfWeek",
+        "startTime",
+        "endTime",
+        "lateAfterMinutes"
+      ]
+    },
+    "Grade": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Grade",
+      "type": "object",
+      "description": "Represents a grade for a student in a subject.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Grade record."
+        },
+        "studentId": {
+          "type": "string",
+          "description": "Reference to Student."
+        },
+        "teacherId": {
+          "type": "string",
+          "description": "Reference to Teacher."
+        },
+        "subject": {
+          "type": "string",
+          "description": "The subject for which the grade was given."
+        },
+        "title": {
+          "type": "string",
+          "description": "The title of the graded item (e.g., 'Chapter 1 Quiz')."
+        },
+        "score": {
+          "type": "number",
+          "description": "The score the student received."
+        },
+        "perfectScore": {
+          "type": "number",
+          "description": "The perfect score for the graded item."
+        },
+        "type": {
+          "type": "string",
+          "enum": ["quiz", "activity", "test"]
+        },
+        "date": {
+          "type": "string",
+          "description": "Date the grade was recorded.",
+          "format": "date"
+        },
+        "studentName": {
+          "type": "string"
+        },
+        "grade": {
+          "type": "string"
+        },
+        "section": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "studentId",
+        "teacherId",
+        "subject",
+        "title",
+        "score",
+        "perfectScore",
+        "type",
+        "date"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/teachers/{teacherId}",
+        "definition": {
+          "entityName": "Teacher",
+          "schema": {
+            "$ref": "#/backend/entities/Teacher"
+          },
+          "description": "Stores teacher profiles. Access is restricted to the owning teacher (path-based ownership).",
+          "params": [
+            {
+              "name": "teacherId",
+              "description": "The unique ID of the teacher, matching the Firebase Auth UID."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/students/{studentId}",
+        "definition": {
+          "entityName": "Student",
+          "schema": {
+            "$ref": "#/backend/entities/Student"
+          },
+          "description": "Stores student profiles. Includes a 'teacherIds' array which denormalizes the teacher-student relationship to enable independent authorization.",
+          "params": [
+            {
+              "name": "studentId",
+              "description": "The unique ID of the student."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/attendance/{attendanceId}",
+        "definition": {
+          "entityName": "Attendance",
+          "schema": {
+            "$ref": "#/backend/entities/Attendance"
+          },
+          "description": "Stores attendance records. Includes the teacherId, denormalizing this value to allow for independent authorization.",
+          "params": [
+            {
+              "name": "attendanceId",
+              "description": "The unique ID of the attendance record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/schedules/{scheduleId}",
+        "definition": {
+          "entityName": "Schedule",
+          "schema": {
+            "$ref": "#/backend/entities/Schedule"
+          },
+          "description": "Stores class schedules set by teachers.",
+          "params": [
+            {
+              "name": "scheduleId",
+              "description": "The unique ID of the schedule record."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/grades/{gradeId}",
+        "definition": {
+          "entityName": "Grade",
+          "schema": {
+            "$ref": "#/backend/entities/Grade"
+          },
+          "description": "Stores grade records for students.",
+          "params": [
+            {
+              "name": "gradeId",
+              "description": "The unique ID of the grade record."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability for the TeachyTally application. It leverages path-based ownership for teacher-specific data and a membership map model for student-teacher relationships. This design avoids complex `get()` calls in security rules, enabling atomic operations and easier debugging.\n\n*   **Teachers Collection:** Stores teacher profiles. Access is restricted to the owning teacher (path-based ownership).\n*   **Students Collection:** Stores student profiles. Includes a `teacherIds` array, which denormalizes the teacher-student relationship, to enable independent authorization.\n*   **Attendance Collection:** Stores attendance records in a root collection for efficient querying. The documents also include the teacherId, denormalizing this value to allow for independent authorization. \n*   **Schedules Collection:** Stores class schedules. Access is restricted to the owning teacher.\n*   **Grades Collection:** Stores grade records. Access is restricted to the owning teacher.\n\nThis structure supports secure `list` operations by segregating data based on ownership. The `teacherIds` field in the `Student` document, and `teacherId` field in the `Attendance`, `Schedule`, and `Grade` documents enable filtering records for a specific teacher without needing to access parent document data."
+  }
+}
+
+    
