@@ -46,3 +46,6 @@ firestore-debug.log
 
 #API keys
 /src/ai/genkit.ts
+
+.env.local
+.env
